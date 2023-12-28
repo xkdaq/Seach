@@ -1,5 +1,5 @@
 
-package com.shuati.cangdun;
+package com.shuati.xunke;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -35,31 +35,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-//仓顿
-public class CMainActivity extends AppCompatActivity {
+//讯课
+public class XMainActivity extends AppCompatActivity {
 
-    public String BASE_URL = "https://zztk.cdky100.vip/";
-    public String tlevel_id = "3330"; //题库的id 3335
-    public String open_id = "oBSIe5V7NzlYpJN0w0xkJibF5LVY";
-
-    OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .build();
-
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build();
-
-    ApiService service = retrofit.create(ApiService.class);
-
-    //开关 是否写入文件-问题
-    private boolean openQuestion = true;
-    //开关 是否写入文件-答案
-    private boolean openAnswer = true;
     private EditText idEditText;
 
     @SuppressLint("SetTextI18n")
@@ -74,17 +52,13 @@ public class CMainActivity extends AppCompatActivity {
             get1();
         });
 
-        //将获取到的题目集合排序之后写入文件
-        findViewById(R.id.btn_get22).setOnClickListener(v -> {
-            bianliLocation();
-        });
 
         idEditText = findViewById(R.id.idEditText);
         idEditText.setText(tlevel_id);
         //确定
         findViewById(R.id.btn_get4).setOnClickListener(v -> {
             tlevel_id = idEditText.getText().toString().trim();
-            Toast.makeText(CMainActivity.this, "修改成功，当前id = " + tlevel_id, Toast.LENGTH_SHORT).show();
+            Toast.makeText(XMainActivity.this, "修改成功，当前id = " + tlevel_id, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -107,7 +81,7 @@ public class CMainActivity extends AppCompatActivity {
                             Log.e("xxx", "获取题目成功=" + timu.size());
                             locationQuestions = timu;
                         }
-                        Toast.makeText(CMainActivity.this, body.getMsg(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(XMainActivity.this, body.getMsg(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -115,7 +89,7 @@ public class CMainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<CDetailBean> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(CMainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(XMainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

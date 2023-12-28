@@ -18,4 +18,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Search"
 include ':app'
-include "library"
