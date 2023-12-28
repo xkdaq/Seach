@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:text="数量" />
+
+    <com.test.NumberFlipView
+        android:id="@+id/numberFlipView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <!--    <com.yy.mobile.rollingtextview.RollingTextView-->
+    <!--        android:id="@+id/rollingTextView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:gravity="center"-->
+    <!--        android:padding="10dp"-->
+    <!--        android:text="charOrder：[abcdefg]" />-->
+
+    <!--    <top.wuhaojie.library.MultiScrollNumber-->
+    <!--        android:id="@+id/scroll_number"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"/>-->
+
+    <!--    <com.robinhood.ticker.TickerView-->
+    <!--        android:id="@+id/tickerView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content" />-->
+
+    <com.test.RandomTextView
+        android:id="@+id/randomTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="123456" />
+
+
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:flexDirection="row"
+        app:justifyContent="flex_start"
+        app:flexWrap="wrap">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/ic_launcher"
+            />
+
+        <!-- 在这里添加你的 TextView，它会在需要时自动换行并左对齐 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本这是一段文本"/>
+
+        <!-- 添加更多的 TextView... -->
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

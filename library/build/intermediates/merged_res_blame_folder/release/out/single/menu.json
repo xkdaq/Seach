@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/menu/example_menu2.xml",
+        "source": "top.wuhaojie.library-core-1.7.0-5:/menu/example_menu2.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/menu/example_menu.xml",
+        "source": "top.wuhaojie.library-core-1.7.0-5:/menu/example_menu.xml"
+    }
+]

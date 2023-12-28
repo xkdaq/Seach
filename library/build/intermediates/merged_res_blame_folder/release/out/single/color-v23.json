@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_btn_colored_text_material.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_tint_spinner.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_tint_spinner.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_tint_edittext.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_tint_edittext.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_tint_default.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_tint_default.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_tint_seek_thumb.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_color_highlight_material.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_color_highlight_material.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_tint_switch_track.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_tint_btn_checkable.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/color-v23/abc_btn_colored_borderless_text_material.xml",
+        "source": "top.wuhaojie.library-appcompat-1.4.1-7:/color-v23/abc_btn_colored_borderless_text_material.xml"
+    }
+]

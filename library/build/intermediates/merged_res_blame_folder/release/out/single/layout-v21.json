@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/layout-v21/notification_action.xml",
+        "source": "top.wuhaojie.library-core-1.7.0-5:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/layout-v21/notification_template_custom_big.xml",
+        "source": "top.wuhaojie.library-core-1.7.0-5:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/layout-v21/notification_template_icon_group.xml",
+        "source": "top.wuhaojie.library-core-1.7.0-5:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "top.wuhaojie.library-merged_res-16:/layout-v21/notification_action_tombstone.xml",
+        "source": "top.wuhaojie.library-core-1.7.0-5:/layout-v21/notification_action_tombstone.xml"
+    }
+]
