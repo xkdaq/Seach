@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dalipan.search.R;
 import com.google.gson.Gson;
+import com.shuati.application.AppUtil;
 import com.shuati.cangdun.CMainActivity;
 import com.shuati.cangdun.bean.CDetailBean;
 import com.shuati.kuozhi.bean.KuoBean;
@@ -72,7 +73,7 @@ public class KMainActivity extends AppCompatActivity {
     List<KuoBean.QuestionContentBean> locationQuestions = new ArrayList<>();
 
     private void getData() {
-        String jsonStr = getJson(this, "xiao/" + index + ".txt");
+        String jsonStr = AppUtil.getJson(this, "xiao/" + index + ".txt");
         Gson gson = new Gson();
         KuoBean kuoBean = gson.fromJson(jsonStr, KuoBean.class);
         if (kuoBean!=null && kuoBean.getErrcode() == 0){
@@ -223,20 +224,5 @@ public class KMainActivity extends AppCompatActivity {
             }
         }
         file.delete();
-    }
-
-    public static String getJson(Context context, String name) {
-        try {
-            InputStreamReader inputReader = new InputStreamReader(context.getAssets().open(name));
-            BufferedReader bufReader = new BufferedReader(inputReader);
-            String line = "";
-            String Result = "";
-            while ((line = bufReader.readLine()) != null)
-                Result += line;
-            return Result;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 }

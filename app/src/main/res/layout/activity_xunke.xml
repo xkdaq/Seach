@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_get1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="获取题库详情" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_get2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取题目列表id"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/btn_get22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            android:text="写入文件1" />
+
+        <Button
+            android:id="@+id/btn_get222"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            android:text="写入文件2" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <Button
+        android:id="@+id/btn_get3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="获取题目"
+        android:visibility="invisible" />
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取哪个题库的id" />
+
+        <EditText
+            android:id="@+id/idEditText"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="取第一章的第几节" />
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="40dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/btn_get4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="重置" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
