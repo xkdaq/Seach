@@ -40,11 +40,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-//讯课
+//讯课-可吖刷题
 //精研刷题
 public class XMainActivity extends AppCompatActivity {
 
-    private String index = "20231";
+    private String index = "20241";
     private EditText idEditText;
 
     @SuppressLint("SetTextI18n")
@@ -72,7 +72,7 @@ public class XMainActivity extends AppCompatActivity {
 
     //获取题库详情
     private void get1() {
-        String jsonStr = AppUtil.getJson(this, "zhenti/" + index + ".txt");
+        String jsonStr = AppUtil.getJson(this, "jiaoyu333/" + index + ".txt");
         Gson gson = new Gson();
         XunBean xunBean = gson.fromJson(jsonStr, XunBean.class);
         if (xunBean!=null && xunBean.getErrno() == 0){

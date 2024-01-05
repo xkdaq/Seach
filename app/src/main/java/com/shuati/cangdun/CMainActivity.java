@@ -4,6 +4,7 @@ package com.shuati.cangdun;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import okhttp3.OkHttpClient;
@@ -35,11 +37,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-//仓顿
+//仓顿-可吖刷题
 public class CMainActivity extends AppCompatActivity {
 
     public String BASE_URL = "https://zztk.cdky100.vip/";
-    public String tlevel_id = "3330"; //题库的id 3335
+    public int tlevel_id = 3153; //题库的id 3335
+    private static final int TOTAL_EXECUTIONS = 2; //数量 8
+
     public String open_id = "oBSIe5V7NzlYpJN0w0xkJibF5LVY";
 
     OkHttpClient client = new OkHttpClient.Builder()
@@ -62,6 +66,12 @@ public class CMainActivity extends AppCompatActivity {
     private boolean openAnswer = true;
     private EditText idEditText;
 
+    private static final int DELAY_MILLIS = 5000; // 延迟时间，单位：毫秒
+
+    // 创建一个Handler，关联主线程的Looper
+    Handler handler = new Handler(Looper.getMainLooper());
+
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,27 +81,57 @@ public class CMainActivity extends AppCompatActivity {
         findViewById(R.id.btn_get1).setOnClickListener(v -> {
             locationQuestions.clear(); //清楚本地的集合
             deleteFolder(); //删除之前的文件
-            get1();
+            get0();
         });
 
         //将获取到的题目集合排序之后写入文件
         findViewById(R.id.btn_get22).setOnClickListener(v -> {
-            bianliLocation();
+            //bianliLocation();
         });
 
         idEditText = findViewById(R.id.idEditText);
-        idEditText.setText(tlevel_id);
+        idEditText.setText("" + tlevel_id);
         //确定
         findViewById(R.id.btn_get4).setOnClickListener(v -> {
-            tlevel_id = idEditText.getText().toString().trim();
+            tlevel_id = Integer.parseInt(idEditText.getText().toString().trim());
             Toast.makeText(CMainActivity.this, "修改成功，当前id = " + tlevel_id, Toast.LENGTH_SHORT).show();
         });
+
+    }
+
+    private static int counter = 0;
+
+    private void get0() {
+       //get1();
+
+        // 定义要执行的任务
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                // 这里放入你需要执行的循环内的方法
+                get1();
+
+                // 增加计数
+                counter++;
+                tlevel_id++;
+
+                // 判断是否达到总执行次数，达到则停止任务
+                if (counter >= TOTAL_EXECUTIONS) {
+                    handler.removeCallbacks(this); // 移除未执行的任务
+                } else {
+                    // 在这里可以再次调度任务，实现循环
+                    handler.postDelayed(this, DELAY_MILLIS);
+                }
+            }
+        };
+        // 第一次执行任务
+        handler.postDelayed(task, DELAY_MILLIS);
     }
 
 
     //获取题库详情
     private void get1() {
-        Call<CDetailBean> octocat = service.cdetail(tlevel_id, open_id);
+        Call<CDetailBean> octocat = service.cdetail("" + tlevel_id, open_id);
         //https://zztk.cdky100.vip/apitk/detail?tlevel_id=1619&openid=oBSIe5V7NzlYpJN0w0xkJibF5LVY
         //https://zztk.cdky100.vip/apitk/detail?tlevel_id=3154&openid=oBSIe5V7NzlYpJN0w0xkJibF5LVY
         octocat.enqueue(new Callback<CDetailBean>() {
@@ -104,8 +144,9 @@ public class CMainActivity extends AppCompatActivity {
                         if (code == 0) {
                             CDetailBean.DetailBean detail = body.getDetail();
                             List<CDetailBean.DetailBean.TimuBean> timu = detail.getTimu();
-                            Log.e("xxx", "获取题目成功=" + timu.size());
+                            Log.e("xxx", "tlevel_id = " + tlevel_id + ",获取题目成功=" + timu.size());
                             locationQuestions = timu;
+                            bianliLocation();
                         }
                         Toast.makeText(CMainActivity.this, body.getMsg(), Toast.LENGTH_SHORT).show();
                     }
@@ -119,9 +160,9 @@ public class CMainActivity extends AppCompatActivity {
             }
         });
 
-        new Handler().postDelayed(() -> {
-            bianliLocation();
-        }, 3000);
+//        new Handler().postDelayed(() -> {
+//            bianliLocation();
+//        }, 3000);
     }
 
     List<CDetailBean.DetailBean.TimuBean> locationQuestions = new ArrayList<>();
@@ -141,9 +182,25 @@ public class CMainActivity extends AppCompatActivity {
 
     //匹配数字打头
     private static boolean startsWithDigit(String input) {
-        // 正则表达式 \d 匹配一个数字字符，^ 表示匹配字符串的开头
-        String regex = "^\\d.*";
-        return Pattern.matches(regex, input);
+//        // 正则表达式 \d 匹配一个数字字符，^ 表示匹配字符串的开头
+//        String regex = "^\\d.*";
+//        return Pattern.matches(regex, input);
+
+        // 使用Character.isDigit方法判断是否以数字字符开头
+        return input.length() > 0 && Character.isDigit(input.charAt(0));
+    }
+
+
+    private static String filterTags(String input) {
+        // 匹配<p>和<span>标签的正则表达式
+        String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>|<div[^>]*>|<\\/div>";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        // 用空字符串替换匹配到的标签
+        String result = matcher.replaceAll("");
+        result =result.replaceAll("\n","");
+        return result;
     }
 
     //移除所有标签
@@ -182,7 +239,8 @@ public class CMainActivity extends AppCompatActivity {
         //解析
         String jiexi = question.getJiexi();
         jiexi = StringEscapeUtils.unescapeHtml4(jiexi);
-        jiexi = removeHtmlTags(jiexi);
+        //jiexi = removeHtmlTags(jiexi);
+        jiexi = filterTags(jiexi);
         jiexi = jiexi.replaceAll("点拨：", "【点拨】");
         jiexi = jiexi.replaceAll("干扰项辨识", "【干扰项辨识】");
         jiexi = jiexi.replaceAll("【干扰分析】", "\r\n" + "【干扰分析】" + "\r\n");
@@ -194,7 +252,7 @@ public class CMainActivity extends AppCompatActivity {
     public void questionFile(String conent) {
         try {
             Log.e("xxxx", "" + conent);
-            FileWriter writer = new FileWriter(getFilesDir() + "example.txt", true);
+            FileWriter writer = new FileWriter(getFilesDir() + "example_" + (tlevel_id -1) + ".txt", true);
             writer.write(conent + "\r\n");
             writer.close();
         } catch (IOException e) {
