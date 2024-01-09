@@ -26,16 +26,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:visibility="gone"
-            android:text="写入文件1" />
+            android:text="写入文件1"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btn_get222"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:visibility="gone"
-            android:text="写入文件2" />
+            android:text="写入文件2"
+            android:visibility="gone" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -69,22 +69,35 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="取第一章的第几节" />
+            android:text="取第一章的第几节"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/editText"
             android:layout_width="40dp"
-            android:visibility="gone"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:text="0" />
+            android:text="0"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btn_get4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="重置" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="过滤标签" />
+
+        <Switch
+            android:id="@+id/switchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:checked="true" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

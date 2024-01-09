@@ -48,9 +48,18 @@ public class XunBean implements Serializable {
             public int id;
             public String type;
             public String stem;
-            public List<Integer> answer;
+            public List<String> answer;
             public String analysis;
             public List<String> options;
+            public List<QuestionsBean> subQuestion;
+
+            public List<QuestionsBean> getSubQuestion() {
+                return subQuestion;
+            }
+
+            public void setSubQuestion(List<QuestionsBean> subQuestion) {
+                this.subQuestion = subQuestion;
+            }
 
             public int getId() {
                 return id;
@@ -76,11 +85,11 @@ public class XunBean implements Serializable {
                 this.stem = stem;
             }
 
-            public List<Integer> getAnswer() {
+            public List<String> getAnswer() {
                 return answer;
             }
 
-            public void setAnswer(List<Integer> answer) {
+            public void setAnswer(List<String> answer) {
                 this.answer = answer;
             }
 

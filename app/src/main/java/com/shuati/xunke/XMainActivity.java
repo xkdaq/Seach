@@ -4,9 +4,9 @@ package com.shuati.xunke;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -15,36 +15,33 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dalipan.search.R;
 import com.google.gson.Gson;
 import com.shuati.application.AppUtil;
-import com.shuati.cangdun.bean.CDetailBean;
-import com.shuati.kuozhi.bean.KuoBean;
-import com.shuati.liulan.ApiService;
 import com.shuati.xunke.bean.XunBean;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 //讯课-可吖刷题
 //精研刷题
 public class XMainActivity extends AppCompatActivity {
 
     private String index = "20241";
+
+    //如果带颜色的解析，就把这个开关关了,手动输入
+    //选择题默认打开这个开关
+    private static boolean isOpenFilterTags = true;
+
     private EditText idEditText;
 
     @SuppressLint("SetTextI18n")
@@ -67,15 +64,26 @@ public class XMainActivity extends AppCompatActivity {
             index = idEditText.getText().toString().trim();
             Toast.makeText(XMainActivity.this, "修改成功，当前id = " + index, Toast.LENGTH_SHORT).show();
         });
+
+
+        Switch switchButton = findViewById(R.id.switchButton);
+        switchButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                isOpenFilterTags = true;
+            } else {
+                isOpenFilterTags = false;
+            }
+        });
+
     }
 
 
     //获取题库详情
     private void get1() {
-        String jsonStr = AppUtil.getJson(this, "jiaoyu333/" + index + ".txt");
+        String jsonStr = AppUtil.getJson(this, "jiaoyu311/" + index + ".txt");
         Gson gson = new Gson();
         XunBean xunBean = gson.fromJson(jsonStr, XunBean.class);
-        if (xunBean!=null && xunBean.getErrno() == 0){
+        if (xunBean != null && xunBean.getErrno() == 0) {
             XunBean.DataXunBean data = xunBean.getData();
             List<XunBean.DataXunBean.QuestionsBean> questions = data.getQuestions();
             Log.e("xxx", "获取题目成功=" + questions.size());
@@ -96,7 +104,7 @@ public class XMainActivity extends AppCompatActivity {
             int count = 1; // 计数器
             for (int i = 0; i < locationQuestions.size(); i++) {
                 XunBean.DataXunBean.QuestionsBean question = locationQuestions.get(i);
-                print(count, question);
+                print(count, question, 0);
                 count++; // 计数器加1
             }
         }
@@ -124,25 +132,25 @@ public class XMainActivity extends AppCompatActivity {
         return plainText;
     }
 
-    public static String convertToString(List<Integer> dataList) {
+    public static String convertToString(List<String> dataList) {
         StringBuilder result = new StringBuilder();
 
-        for (int value : dataList) {
+        for (String value : dataList) {
             switch (value) {
-                case 0:
+                case "0":
                     result.append("A");
                     break;
-                case 1:
+                case "1":
                     result.append("B");
                     break;
-                case 2:
+                case "2":
                     result.append("C");
                     break;
-                case 3:
+                case "3":
                     result.append("D");
                     break;
                 default:
-                    result.append("选项异常");
+                    result.append(filterXuanXian(value));
                     break;
             }
         }
@@ -150,54 +158,135 @@ public class XMainActivity extends AppCompatActivity {
         return result.toString();
     }
 
-    private void print(int count, XunBean.DataXunBean.QuestionsBean question) {
+    //mType 0加count 1不加count
+    private void print(int count, XunBean.DataXunBean.QuestionsBean question, int mType) {
+        if (mType == 0) {
+            if (count == 1) {
+                if ("1".equals(question.getType()) || "2".equals(question.getType())) {
+                    questionFile("一、选择题");
+                } else if ("5".equals(question.getType())) {
+                    questionFile("一、问答题");
+                } else if ("6".equals(question.getType())) {
+                    questionFile("一、材料题");
+                }
+            }
+        }
+
         //题干
         String title = question.getStem();
-        title = filterTags(title);
+        title = filterTagsNewJiexi(title);
         //title = title.replaceAll(" ", "");
         //+count+")"
         //Log.e("xxxx","--"+(title));
         //Log.e("xxxx","--"+startsWithDigit(title));
-        if (startsWithDigit(title)) {
-            questionFile(count + ". " + title);
+
+        if (mType == 0) {
+            if (startsWithDigit(title)) {
+                questionFile(count + ". " + title);
+            } else {
+                questionFile(count + "." + title);
+            }
         } else {
-            questionFile(count + "." + title);
+            questionFile(title);
         }
 
-        //选项
-        List<String> options = question.getOptions();
-        questionFile("A."+filterTags(options.get(0)));
-        questionFile("B."+filterTags(options.get(1)));
-        questionFile("C."+filterTags(options.get(2)));
-        questionFile("D."+filterTags(options.get(3)));
+        if ("1".equals(question.getType()) || "2".equals(question.getType())) {
+            //1单选题 2多选题
+            //选项
+            List<String> options = question.getOptions();
+            questionFile("A." + filterXuanXian(options.get(0)));
+            questionFile("B." + filterXuanXian(options.get(1)));
+            questionFile("C." + filterXuanXian(options.get(2)));
+            questionFile("D." + filterXuanXian(options.get(3)));
+        }
 
-        //答案
-        List<Integer> answer = question.getAnswer();
-        questionFile("答案：" + convertToString(answer));
+        if ("6".equals(question.getType())) {
+            List<XunBean.DataXunBean.QuestionsBean> subQuestion = question.getSubQuestion();
+            for (int i = 0; i < subQuestion.size(); i++) {
+                XunBean.DataXunBean.QuestionsBean questionsBean = subQuestion.get(i);
+                print(i + 1000, questionsBean, 1);
+            }
+        } else {
+            //答案
+            List<String> answer = question.getAnswer();
+            questionFile("答案：" + convertToString(answer));
 
-        //解析
-        String jiexi = question.getAnalysis();
-        jiexi = StringEscapeUtils.unescapeHtml4(jiexi);
-        jiexi = filterTags(jiexi);
-        //jiexi = removeHtmlTags(jiexi);
-        //jiexi = jiexi.replaceAll("点拨：", "【点拨】");
-        //jiexi = jiexi.replaceAll("干扰项辨识", "【干扰项辨识】");
-        //jiexi = jiexi.replaceAll("【干扰分析】", "\r\n" + "【干扰分析】" + "\r\n");
-        jiexi = jiexi.replaceAll("<strong>【试题简析】","\r\n<strong>【试题简析】");
-        jiexi = TextUtils.isEmpty(jiexi) ? "暂无解析" : jiexi;
-        //jiexi = "\r\n【出处】" + question.getChuchu() +"\r\n" + jiexi;
-        questionFile("解析：" + jiexi + "");
+            //解析
+            String jiexi = question.getAnalysis();
+            jiexi = StringEscapeUtils.unescapeHtml4(jiexi);
+            jiexi = filterTagsNewJiexi(jiexi);
+            //jiexi = removeHtmlTags(jiexi);
+            //jiexi = jiexi.replaceAll("点拨：", "【点拨】");
+            //jiexi = jiexi.replaceAll("干扰项辨识", "【干扰项辨识】");
+            //jiexi = jiexi.replaceAll("【干扰分析】", "\r\n" + "【干扰分析】" + "\r\n");
+            //jiexi = jiexi.replaceAll("<strong>【试题简析】", "\r\n<strong>【试题简析】");
+            //jiexi = TextUtils.isEmpty(jiexi) ? "暂无解析" : jiexi;
+            //jiexi = "\r\n【出处】" + question.getChuchu() +"\r\n" + jiexi;
+            questionFile("解析：" + jiexi + "");
+        }
     }
 
+
+    //标题
     private static String filterTags(String input) {
-        // 匹配<p>和<span>标签的正则表达式
-        String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>";
+        //匹配<p>和<span>标签的正则表达式
+        String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>|<div[^>]*>|<\\/div>";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);
-
-        // 用空字符串替换匹配到的标签
+        //用空字符串替换匹配到的标签
         String result = matcher.replaceAll("");
-        result =result.replaceAll("\n","");
+        return result;
+    }
+
+
+    //选项 直接去掉p标签和换行
+    private static String filterXuanXian(String input) {
+        //匹配<p>和<span>标签的正则表达式
+        String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>|<div[^>]*>|<\\/div>";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        //用空字符串替换匹配到的标签
+        String result = matcher.replaceAll("");
+        //去掉换行
+        result = result.replaceAll("\n", "");
+        return result;
+    }
+
+    public static String filterP(String html) {
+        // 使用Jsoup解析HTML字符串
+        Document doc = Jsoup.parse(html);
+        // 选择所有的<p>标签
+        Elements paragraphs = doc.select("p");
+        // 使用StringBuilder构建结果
+        StringBuilder result = new StringBuilder();
+        // 遍历每个<p>标签，提取文本内容并添加换行
+        for (Element paragraph : paragraphs) {
+            String paragraphContent = paragraph.html();
+            result.append(paragraphContent).append("\r\n");
+        }
+        // 删除最后多余的换行
+        if (result.length() >= 2) {
+            result.delete(result.length() - 2, result.length());
+        }
+        return result.toString();
+    }
+
+    private static String filterTagsNewJiexi(String input) {
+        String result = "";
+        if (isOpenFilterTags) {
+            //先把p标签转成换行的文本
+            input = filterP(input);
+
+            // 匹配<p>和<span>标签的正则表达式
+            String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>|<div[^>]*>|<\\/div>";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(input);
+            // 用空字符串替换匹配到的标签
+            result = matcher.replaceAll("");
+            result = result.replaceAll("<br>","\r\n");
+        } else {
+            result = input;
+        }
         return result;
     }
 
