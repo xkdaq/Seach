@@ -74,9 +74,7 @@ public class XMainActivity extends AppCompatActivity {
                 isOpenFilterTags = false;
             }
         });
-
     }
-
 
     //获取题库详情
     private void get1() {
@@ -283,7 +281,7 @@ public class XMainActivity extends AppCompatActivity {
             Matcher matcher = pattern.matcher(input);
             // 用空字符串替换匹配到的标签
             result = matcher.replaceAll("");
-            result = result.replaceAll("<br>","\r\n");
+            result = result.replaceAll("<br>", "\r\n");
         } else {
             result = input;
         }
