@@ -192,10 +192,17 @@ public class XMainActivity extends AppCompatActivity {
             //1单选题 2多选题
             //选项
             List<String> options = question.getOptions();
-            questionFile("A." + filterXuanXian(options.get(0)));
-            questionFile("B." + filterXuanXian(options.get(1)));
-            questionFile("C." + filterXuanXian(options.get(2)));
-            questionFile("D." + filterXuanXian(options.get(3)));
+            if (options!=null && options.size()>0) {
+                questionFile("A." + filterXuanXian(options.get(0)));
+                questionFile("B." + filterXuanXian(options.get(1)));
+                questionFile("C." + filterXuanXian(options.get(2)));
+                questionFile("D." + filterXuanXian(options.get(3)));
+            }else{
+                questionFile("A.");
+                questionFile("B.");
+                questionFile("C.");
+                questionFile("D.");
+            }
         }
 
         if ("6".equals(question.getType())) {

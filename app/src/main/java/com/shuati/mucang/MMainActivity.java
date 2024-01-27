@@ -2,17 +2,11 @@
 package com.shuati.mucang;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,8 +16,6 @@ import com.dalipan.search.R;
 import com.google.gson.Gson;
 import com.shuati.liulan.ApiService;
 import com.shuati.mucang.bean.MDetailBean;
-
-//import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,7 +47,6 @@ public class MMainActivity extends AppCompatActivity {
     //43337
     //43370
     //43403
-
 
     public String key = "c68219d5f6feb7b3e12aa01b4eb6bcc8"; //这个应该用户的key
 
@@ -104,13 +95,12 @@ public class MMainActivity extends AppCompatActivity {
             bianliLocation();
         });
 
-        //将答案的文件写入问题的文件
         findViewById(R.id.btn_get222).setOnClickListener(v -> {
-            read();
+
         });
 
         editTextNumber = findViewById(R.id.editTextNumber);
-        editTextNumber.setText(""+number);
+        editTextNumber.setText("" + number);
 
         editText = findViewById(R.id.editText);
         editText.setText(member_id);
@@ -135,14 +125,13 @@ public class MMainActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             bianliLocation();
-            read();
         }, 3000);
     }
 
     //获取题库详情
     private void get1(String subject_id_new) {
 //        Log.e("xxxxx","==="+subject_id_new);
-        Call<MDetailBean> octocat = service.mudetail(member_id, subject_id_new, key,"40");
+        Call<MDetailBean> octocat = service.mudetail(member_id, subject_id_new, key, "40");
         //https://st3.quyanedu.com/api/index/subject_info?member_id=110095&subject_id=15035&key=1b8e71ba5347e0b2450af18a593b1d8b
         octocat.enqueue(new Callback<MDetailBean>() {
             @Override
@@ -194,15 +183,13 @@ public class MMainActivity extends AppCompatActivity {
 
     private void print(int count, MDetailBean.DatasBean question) {
         //if (question.getType() != 1) return;
-        if (openQuestion) {
-            String title = question.getSubject_str();
-            title = title.replaceAll(" ", "");
-            title = title.replaceAll("（）", "( )");
-            title = title.replaceAll("\\(\\)", "( )");
-            title = title.replaceAll("\\(　　\\)", "( )");
-            title = title.replaceAll("（\t）", "( )");
-            questionFile(count + "." + title);
-        }
+        String title = question.getSubject_str();
+        title = title.replaceAll(" ", "");
+        title = title.replaceAll("（）", "( )");
+        title = title.replaceAll("\\(\\)", "( )");
+        title = title.replaceAll("\\(　　\\)", "( )");
+        title = title.replaceAll("（\t）", "( )");
+        questionFile(count + "." + title);
 
         String option_a = question.getOption_str().get(0).getContent();
         questionFile("A." + option_a);
@@ -213,36 +200,32 @@ public class MMainActivity extends AppCompatActivity {
         String option_d = question.getOption_str().get(3).getContent();
         questionFile("D." + option_d);
 
-        if (openAnswer) {
-            String right_text = question.getCorrect_answer();
-            right_text = right_text.replaceAll(",","");
-            anwserFile(count + ".答案：" + right_text);
+        String right_text = question.getCorrect_answer();
+        right_text = right_text.replaceAll(",", "");
+        questionFile("答案：" + right_text);
 
-            String jiexi = question.getAnalysis_content();
-            jiexi = jiexi.replaceAll(" ", "");
-            jiexi = jiexi.replaceAll("<br/>", "\r\n");
-            jiexi = jiexi.replaceAll("<br />", "\r\n");
-            jiexi = jiexi.replaceAll("点拨：", "【点拨】");
+        String jiexi = question.getAnalysis_content();
+        jiexi = jiexi.replaceAll(" ", "");
+        jiexi = jiexi.replaceAll("<br/>", "\r\n");
+        jiexi = jiexi.replaceAll("<br />", "\r\n");
+        jiexi = jiexi.replaceAll("点拨：", "【点拨】");
 //            jiexi = jiexi.replaceAll("A.", "选项A ");
 //            jiexi = jiexi.replaceAll("B.", "选项B ");
 //            jiexi = jiexi.replaceAll("C.", "选项C ");
 //            jiexi = jiexi.replaceAll("D.", "选项D ");
-            jiexi = jiexi.replaceAll("解析", "\r\n");
-            jiexi = jiexi.replaceAll(jiexiEx, "");
+        jiexi = jiexi.replaceAll("解析", "\r\n");
+        jiexi = jiexi.replaceAll(jiexiEx, "");
 //            jiexi = StringEscapeUtils.unescapeHtml4(jiexi);
-
-            jiexi = "";
-            if (TextUtils.isEmpty(jiexi)) {
-                jiexi = "暂无解析";
-            }
+        if (TextUtils.isEmpty(jiexi)) {
+            jiexi = "暂无解析";
+        }
 //            String point = question.getPoint();
 //            if (TextUtils.isEmpty(point)) {
 //                point = "无";
 //            }
 //            }
-            anwserFile("解析：");
-            anwserFile(jiexi);
-        }
+        questionFile("解析：");
+        questionFile(jiexi);
     }
 
 
@@ -257,40 +240,10 @@ public class MMainActivity extends AppCompatActivity {
         }
     }
 
-    public void anwserFile(String conent) {
-        try {
-            FileWriter writer = new FileWriter(getFilesDir() + "anwser" + member_id + ".txt", true);
-            writer.write(conent + "\r\n");
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void read() {
-        try {
-            questionFile("参考答案：");
-            questionFile("一、单项选择题");
-            FileReader fileReader = new FileReader(getFilesDir() + "anwser" + member_id + ".txt");
-            BufferedReader breader = new BufferedReader(fileReader);
-            String str;
-            while ((str = breader.readLine()) != null) {
-                questionFile(str);
-            }
-            Log.e("xxxx", "写入文件完成");
-            fileReader.close();
-        } catch (Exception e) {
-            e.getStackTrace();
-        }
-    }
 
     public void deleteFolder() {
         File file1 = new File(getFilesDir() + "example" + member_id + ".txt");
         deleteFolder(file1);
-
-        File file2 = new File(getFilesDir() + "anwser" + member_id + ".txt");
-        deleteFolder(file2);
     }
 
     public void deleteFolder(File file) {
