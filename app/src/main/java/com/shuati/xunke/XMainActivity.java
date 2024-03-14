@@ -2,8 +2,10 @@
 package com.shuati.xunke;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -36,7 +38,9 @@ import java.util.regex.Pattern;
 //精研刷题
 public class XMainActivity extends AppCompatActivity {
 
-    private String index = "20241";
+    //333新大纲/1中教史 2外教史 3教心 4教原
+    private String lujin = "jiaoyu333/xdg/4/";
+    private String index = "41";
 
     //如果带颜色的解析，就把这个开关关了,手动输入
     //选择题默认打开这个开关
@@ -78,7 +82,7 @@ public class XMainActivity extends AppCompatActivity {
 
     //获取题库详情
     private void get1() {
-        String jsonStr = AppUtil.getJson(this, "jiaoyu311/" + index + ".txt");
+        String jsonStr = AppUtil.getJson(this, lujin + index + ".txt");
         Gson gson = new Gson();
         XunBean xunBean = gson.fromJson(jsonStr, XunBean.class);
         if (xunBean != null && xunBean.getErrno() == 0) {
@@ -289,6 +293,10 @@ public class XMainActivity extends AppCompatActivity {
             // 用空字符串替换匹配到的标签
             result = matcher.replaceAll("");
             result = result.replaceAll("<br>", "\r\n");
+
+            // 使用正则表达式替换<u>标签为<strong>标签
+            result = result.replaceAll("<u>(.*?)</u>", "<strong>$1</strong>");
+
         } else {
             result = input;
         }

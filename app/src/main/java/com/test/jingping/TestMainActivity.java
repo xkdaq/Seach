@@ -1,4 +1,4 @@
-package com.jingping;
+package com.test.jingping;
 
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
