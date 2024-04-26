@@ -2,10 +2,8 @@
 package com.shuati.xunke;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -39,8 +37,8 @@ import java.util.regex.Pattern;
 public class XMainActivity extends AppCompatActivity {
 
     //333新大纲/1中教史 2外教史 3教心 4教原
-    private String lujin = "zhengzhi/xutao/5/";
-    private String index = "500";
+    private String lujin = "zhengzhi/tuijie/2/";
+    private String index = "091";
 
     //如果带颜色的解析，就把这个开关关了,手动输入
     //选择题默认打开这个开关
@@ -196,12 +194,12 @@ public class XMainActivity extends AppCompatActivity {
             //1单选题 2多选题
             //选项
             List<String> options = question.getOptions();
-            if (options!=null && options.size()>0) {
+            if (options != null && options.size() > 0) {
                 questionFile("A." + filterXuanXian(options.get(0)));
                 questionFile("B." + filterXuanXian(options.get(1)));
                 questionFile("C." + filterXuanXian(options.get(2)));
                 questionFile("D." + filterXuanXian(options.get(3)));
-            }else{
+            } else {
                 questionFile("A.");
                 questionFile("B.");
                 questionFile("C.");
@@ -222,6 +220,8 @@ public class XMainActivity extends AppCompatActivity {
 
             //解析
             String jiexi = question.getAnalysis();
+            jiexi = jiexi.replaceAll("☺","");
+            jiexi = jiexi.replaceAll("精研","猴哥");
             jiexi = StringEscapeUtils.unescapeHtml4(jiexi);
             jiexi = filterTagsNewJiexi(jiexi);
             //jiexi = removeHtmlTags(jiexi);
@@ -231,6 +231,7 @@ public class XMainActivity extends AppCompatActivity {
             //jiexi = jiexi.replaceAll("<strong>【试题简析】", "\r\n<strong>【试题简析】");
             //jiexi = TextUtils.isEmpty(jiexi) ? "暂无解析" : jiexi;
             //jiexi = "\r\n【出处】" + question.getChuchu() +"\r\n" + jiexi;
+            //jiexi = jiexi + "[公众号：猴子不吃柠檬]"+"\r\n";
             questionFile("解析：" + jiexi + "");
         }
     }
@@ -290,12 +291,34 @@ public class XMainActivity extends AppCompatActivity {
             String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>|<div[^>]*>|<\\/div>";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(input);
-            // 用空字符串替换匹配到的标签
             result = matcher.replaceAll("");
+
             result = result.replaceAll("<br>", "\r\n");
 
             // 使用正则表达式替换<u>标签为<strong>标签
             result = result.replaceAll("<u>(.*?)</u>", "<strong>$1</strong>");
+
+            // 匹配style样式 全部替换
+            String regex1 = "\\s*style=\"[^\"]*\"\\s*";
+            Pattern pattern1 = Pattern.compile(regex1);
+            Matcher matcher1 = pattern1.matcher(result);
+            result = matcher1.replaceAll("");
+
+            // 正则表达式在“猴哥”前添加换行符
+//            String monkeyRegex = "(猴哥补充)";
+//            result = result.replaceAll(monkeyRegex, "\n$1");
+//
+//            String monkeyRegex1 = "(拓展与点拨)";
+//            result = result.replaceAll(monkeyRegex1, "\n$1");
+
+            // 正则表达式替换空内容的<strong>标签
+            String emptyStrongRegex = "<strong></strong>";
+            result = result.replaceAll(emptyStrongRegex, "");
+
+            // 正则表达式替换只包含换行的<strong>标签
+            String strongWithNewlineRegex = "<strong>\\s*\\n\\s*</strong>";
+            result = result.replaceAll(strongWithNewlineRegex, "");
+
 
         } else {
             result = input;
