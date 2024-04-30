@@ -1890,7 +1890,7 @@
 			"stem": "<p>纺织厂的资本家购买的棉花属于</p>\n",
 			"answer": [0, 3],
 			"analysis": "<p><span style=\"color: #FF0000;\"><strong>★</strong></span><strong>解题思路</strong></p><p><span style=\"color: #E36C09;\"><strong>&nbsp; &nbsp; &nbsp;本题考查资本的划分，属于分析理解题</strong></span>。<span style=\"color: #00B0F0;\"><u>不变资本是以生产资料形态存在的资本，它的价值通过工人的具体劳动转移到新产品中，不会发生增殖。流动资本是指生产资本中用于购买原料、燃料、辅助材料等劳动资料和用于购买劳动力的部分，它一次投入并一次转移到商品中</u></span>。纺织厂的资本家购买的棉花，在生产中不会发生增殖，且一次投入并一次转移到商品中。因此，选项A、D正确。</p><p><strong><br/></strong></p><p><span style=\"color: #FF0000;\"><strong>※</strong></span><strong>干扰选项</strong></p><p>&nbsp; &nbsp; &nbsp;选项B,固定资本是指以厂房、机器、设备和工具等劳动资料的形式存在的生产资本。与题意不符，故不选。</p><p>&nbsp; &nbsp; &nbsp;选项C,可变资本是用来购买劳动力的那部分资本，在生产过程中不是被转移到新产品中，而是由工人的劳动再生产出来。与题意不符，故不选。</p>",
-			"options": ["<p>固定资本</p>\n", "<p>不变资本</p>\n", "<p>可变资本</p>\n", "<p>流动资本</p>"],
+			"options": ["<p>不变资本</p>\n", "<p>固定资本</p>\n", "<p>可变资本</p>\n", "<p>流动资本</p>"],
 			"difficulty": 2,
 			"parentId": 0,
 			"subCount": 0,
