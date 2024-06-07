@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
 public class XMainActivity extends AppCompatActivity {
 
     //333新大纲/1中教史 2外教史 3教心 4教原
-    private String lujin = "jiaoyu333/dongqing/4/";
-    private String index = "01";
+    private String lujin = "zhengzhi/xiao/1000/1/";
+    private String index = "00";
 
     //如果带颜色的解析，就把这个开关关了,手动输入
     //选择题默认打开这个开关
@@ -101,9 +101,18 @@ public class XMainActivity extends AppCompatActivity {
         if (locationQuestions != null && locationQuestions.size() > 0) {
             locationQuestions.sort(Comparator.comparingInt(XunBean.DataXunBean.QuestionsBean::getId));
 
+            boolean foundFirstTypeOne = false;
+
             int count = 1; // 计数器
             for (int i = 0; i < locationQuestions.size(); i++) {
                 XunBean.DataXunBean.QuestionsBean question = locationQuestions.get(i);
+
+                //生成多选题的第一个时候 加一个标题
+                if (question.getType().equals("2") && !foundFirstTypeOne) {
+                    questionFile(question.getType(), "一、选择题");
+                    foundFirstTypeOne = true;
+                }
+
                 print(count, question, 0);
                 count++; // 计数器加1
             }
@@ -160,14 +169,15 @@ public class XMainActivity extends AppCompatActivity {
 
     //mType 0加count 1不加count
     private void print(int count, XunBean.DataXunBean.QuestionsBean question, int mType) {
+        String type = question.getType(); //"1"单选 "2"多选
         if (mType == 0) {
             if (count == 1) {
                 if ("1".equals(question.getType()) || "2".equals(question.getType())) {
-                    questionFile("一、选择题");
+                    questionFile(type, "一、选择题");
                 } else if ("5".equals(question.getType())) {
-                    questionFile("一、问答题");
+                    questionFile(type, "一、问答题");
                 } else if ("6".equals(question.getType())) {
-                    questionFile("一、材料题");
+                    questionFile(type, "一、材料题");
                 }
             }
         }
@@ -182,12 +192,12 @@ public class XMainActivity extends AppCompatActivity {
 
         if (mType == 0) {
             if (startsWithDigit(title)) {
-                questionFile(count + ". " + title);
+                questionFile(type, count + ". " + title);
             } else {
-                questionFile(count + "." + title);
+                questionFile(type, count + "." + title);
             }
         } else {
-            questionFile(title);
+            questionFile(type, title);
         }
 
         if ("1".equals(question.getType()) || "2".equals(question.getType())) {
@@ -195,15 +205,15 @@ public class XMainActivity extends AppCompatActivity {
             //选项
             List<String> options = question.getOptions();
             if (options != null && options.size() > 0) {
-                questionFile("A." + filterXuanXian(options.get(0)));
-                questionFile("B." + filterXuanXian(options.get(1)));
-                questionFile("C." + filterXuanXian(options.get(2)));
-                questionFile("D." + filterXuanXian(options.get(3)));
+                questionFile(type, "A." + filterXuanXian(options.get(0)));
+                questionFile(type, "B." + filterXuanXian(options.get(1)));
+                questionFile(type, "C." + filterXuanXian(options.get(2)));
+                questionFile(type, "D." + filterXuanXian(options.get(3)));
             } else {
-                questionFile("A.");
-                questionFile("B.");
-                questionFile("C.");
-                questionFile("D.");
+                questionFile(type, "A.");
+                questionFile(type, "B.");
+                questionFile(type, "C.");
+                questionFile(type, "D.");
             }
         }
 
@@ -216,12 +226,12 @@ public class XMainActivity extends AppCompatActivity {
         } else {
             //答案
             List<String> answer = question.getAnswer();
-            questionFile("答案：" + convertToString(answer));
+            questionFile(type, "答案：" + convertToString(answer));
 
             //解析
             String jiexi = question.getAnalysis();
-            jiexi = jiexi.replaceAll("☺","");
-            jiexi = jiexi.replaceAll("精研","猴哥");
+            jiexi = jiexi.replaceAll("☺", "");
+            jiexi = jiexi.replaceAll("精研", "猴哥");
             jiexi = StringEscapeUtils.unescapeHtml4(jiexi);
             jiexi = filterTagsNewJiexi(jiexi);
             //jiexi = removeHtmlTags(jiexi);
@@ -232,7 +242,7 @@ public class XMainActivity extends AppCompatActivity {
             //jiexi = TextUtils.isEmpty(jiexi) ? "暂无解析" : jiexi;
             //jiexi = "\r\n【出处】" + question.getChuchu() +"\r\n" + jiexi;
             //jiexi = jiexi + "[公众号：猴子不吃柠檬]"+"\r\n";
-            questionFile("解析：" + jiexi + "");
+            questionFile(type, "解析：" + jiexi + "");
         }
     }
 
@@ -287,13 +297,24 @@ public class XMainActivity extends AppCompatActivity {
             //先把p标签转成换行的文本
             input = filterP(input);
 
+            // 使用正则表达式替换<span>指定颜色标签为<strong>标签
+            Pattern pattern0 = Pattern.compile("<span style=\"[^\"]*color: #00B0F0;[^\"]*\">(.*?)</span>");
+            Matcher matcher0 = pattern0.matcher(input);
+            StringBuffer sb = new StringBuffer();
+            while (matcher0.find()) {
+                // Replace with <strong> tags, maintaining the original text
+                matcher0.appendReplacement(sb, "<strong>$1</strong>");
+            }
+            matcher0.appendTail(sb);
+            result = sb.toString();
+
             // 匹配<p>和<span>标签的正则表达式
             String regex = "<p[^>]*>|<\\/p>|<span[^>]*>|<\\/span>|<div[^>]*>|<\\/div>";
             Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(input);
+            Matcher matcher = pattern.matcher(result);
             result = matcher.replaceAll("");
 
-            result = result.replaceAll("<br>", "\r\n");
+            result = result.replaceAll("<br>", "");
 
             // 使用正则表达式替换<u>标签为<strong>标签
             result = result.replaceAll("<u>(.*?)</u>", "<strong>$1</strong>");
@@ -304,13 +325,6 @@ public class XMainActivity extends AppCompatActivity {
             Matcher matcher1 = pattern1.matcher(result);
             result = matcher1.replaceAll("");
 
-            // 正则表达式在“猴哥”前添加换行符
-//            String monkeyRegex = "(猴哥补充)";
-//            result = result.replaceAll(monkeyRegex, "\n$1");
-//
-//            String monkeyRegex1 = "(拓展与点拨)";
-//            result = result.replaceAll(monkeyRegex1, "\n$1");
-
             // 正则表达式替换空内容的<strong>标签
             String emptyStrongRegex = "<strong></strong>";
             result = result.replaceAll(emptyStrongRegex, "");
@@ -319,6 +333,21 @@ public class XMainActivity extends AppCompatActivity {
             String strongWithNewlineRegex = "<strong>\\s*\\n\\s*</strong>";
             result = result.replaceAll(strongWithNewlineRegex, "");
 
+            // 正则表达式在“猴哥”前添加换行符
+//            String monkeyRegex = "(猴哥补充)";
+//            result = result.replaceAll(monkeyRegex, "\n$1");
+//
+//            String monkeyRegex1 = "(拓展与点拨)";
+//            result = result.replaceAll(monkeyRegex1, "\n$1");
+
+            //<br><br/>
+//            String monkeyRegex1 = "(简析：)";
+//            result = result.replaceAll(monkeyRegex1, "\n$1");
+//
+            String monkeyRegex2 = "(<strong>点拨：)";
+            result = result.replaceAll(monkeyRegex2, "------\n$1");
+
+            result = result.replaceAll("精讲出处", "精讲出处：");
 
         } else {
             result = input;
@@ -326,10 +355,17 @@ public class XMainActivity extends AppCompatActivity {
         return result;
     }
 
-    public void questionFile(String conent) {
+    public void questionFile(String type, String conent) {
+        Log.e("xxxx", "" + conent);
         try {
-            Log.e("xxxx", "" + conent);
-            FileWriter writer = new FileWriter(getFilesDir() + "example.txt", true);
+            FileWriter writer = null;
+            if ("1".equals(type)) {
+                writer = new FileWriter(getFilesDir() + "example1.txt", true);
+            } else if ("2".equals(type)) {
+                writer = new FileWriter(getFilesDir() + "example2.txt", true);
+            } else {
+                writer = new FileWriter(getFilesDir() + "example.txt", true);
+            }
             writer.write(conent + "\r\n");
             writer.close();
         } catch (IOException e) {
@@ -338,8 +374,12 @@ public class XMainActivity extends AppCompatActivity {
     }
 
     public void deleteFolder() {
-        File file1 = new File(getFilesDir() + "example.txt");
+        File file = new File(getFilesDir() + "example.txt");
+        File file1 = new File(getFilesDir() + "example1.txt");
+        File file2 = new File(getFilesDir() + "example2.txt");
+        deleteFolder(file);
         deleteFolder(file1);
+        deleteFolder(file2);
     }
 
     public void deleteFolder(File file) {
