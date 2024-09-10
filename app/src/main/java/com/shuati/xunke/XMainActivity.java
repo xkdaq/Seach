@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
 public class XMainActivity extends AppCompatActivity {
 
     //333新大纲/1中教史 2外教史 3教心 4教原
-    private String lujin = "zhengzhi/xiao/1000/1/";
-    private String index = "00";
+    private String lujin = "zhenti/2024/";
+    private String index = "24";
 
     //如果带颜色的解析，就把这个开关关了,手动输入
     //选择题默认打开这个开关
